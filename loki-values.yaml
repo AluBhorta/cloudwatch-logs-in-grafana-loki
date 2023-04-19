@@ -1,0 +1,83 @@
+gateway:
+  service:
+    type: LoadBalancer
+loki:
+  auth_enabled: false
+  commonConfig:
+    path_prefix: /var/loki
+    replication_factor: 1
+  limits_config:
+    enforce_metric_name: false
+    ingestion_burst_size_mb: 20
+    ingestion_rate_mb: 10
+    max_concurrent_tail_requests: 10
+    max_entries_limit_per_query: 5000
+    max_line_size: 0
+    max_query_length: 0s
+    max_query_parallelism: 16
+    max_streams_per_user: 0
+    query_timeout: 900s
+    reject_old_samples: true
+    reject_old_samples_max_age: 168h
+  rulerConfig:
+    storage:
+      local:
+        directory: /var/loki/rules
+      type: local
+  schema_config:
+    configs:
+    - from: "2022-01-11"
+      index:
+        period: 24h
+        prefix: loki_index_
+      object_store: s3
+      schema: v12
+      store: boltdb-shipper
+  storage:
+    type: s3
+    bucketNames:
+      chunks: loki-store-eks-demo
+      ruler: loki-store-eks-demo
+      admin: loki-store-eks-demo      
+    s3:
+      region: ap-south-1    
+      insecure: false
+      s3forcepathstyle: true
+  storage_config:
+    boltdb_shipper:
+      active_index_directory: /var/loki/index
+      shared_store: s3
+monitoring:
+  alerts:
+    enabled: false
+  dashboards:
+    enabled: false
+  rules:
+    enabled: false
+  selfMonitoring:
+    enabled: false
+    grafanaAgent:
+      installOperator: false
+  lokiCanary:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+test:
+  enabled: false
+read:
+  replicas: 1
+backend:
+  replicas: 1
+  persistence:
+    enableStatefulSetAutoDeletePVC: true
+    size: 4Gi
+write:
+  replicas: 1
+  terminationGracePeriodSeconds: 60
+  persistence:
+    enableStatefulSetAutoDeletePVC: true
+    size: 4Gi
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/LokiStorage-eks-demo
+  create: true

@@ -1,0 +1,99 @@
+loki:
+  auth_enabled: false
+  commonConfig:
+    path_prefix: /var/loki
+    replication_factor: 1
+  limits_config:
+    enforce_metric_name: false
+    ingestion_burst_size_mb: 20
+    ingestion_rate_mb: 10
+    max_concurrent_tail_requests: 10
+    max_entries_limit_per_query: 5000
+    max_line_size: 0
+    max_query_length: 0s
+    max_query_parallelism: 16
+    max_streams_per_user: 0
+    query_timeout: 900s
+    reject_old_samples: true
+    reject_old_samples_max_age: 168h
+  rulerConfig:
+    storage:
+      local:
+        directory: /var/loki/rules
+      type: local
+  # schema_config:
+  #   configs:
+  #     - from: "2022-01-11"
+  #       index:
+  #         period: 24h
+  #         prefix: loki_index_
+  #       object_store: s3
+  #       schema: v12
+  #       store: boltdb-shipper
+  storage:
+    bucketNames:
+      chunks: chunks
+      ruler: ruler
+      admin: admin
+    type: s3
+    s3:
+      endpoint: https://s3.ap-south-1.amazonaws.com/rnd-and-tests
+      region: ap-south-1
+      accessKeyId: XXXXXXXXXXXX
+      secretAccessKey: XXXXXXXXXXXX
+      # endpoint: s3://${S3_BUCKET_NAME}
+      # region: ${AWS_REGION}
+      # accessKeyId: ${AWS_ACCESS_KEY}
+      # secretAccessKey: ${AWS_SECRET_KEY}
+      s3ForcePathStyle: false
+      insecure: false
+
+  storage_config:
+    aws:
+      insecure: false
+      s3: s3://ap-south-1/rnd-and-tests
+      s3forcepathstyle: true    
+    boltdb_shipper:
+      active_index_directory: /var/loki/active
+      shared_store: s3
+      cache_location: /var/loki/cache
+      cache_ttl: 24h
+
+  compactor:
+    working_directory: /var/loki/compactor
+    shared_store: s3
+    compaction_interval: 5m
+
+monitoring:
+  alerts:
+    enabled: false
+  dashboards:
+    enabled: false
+  rules:
+    enabled: false
+  selfMonitoring:
+    enabled: false
+    grafanaAgent:
+      installOperator: false
+  lokiCanary:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+test:
+  enabled: false
+read:
+  replicas: 1
+backend:
+  replicas: 1
+  persistence:
+    enableStatefulSetAutoDeletePVC: true
+    size: 4Gi
+write:
+  replicas: 1
+  terminationGracePeriodSeconds: 60
+  persistence:
+    enableStatefulSetAutoDeletePVC: true
+    size: 4Gi
+gateway:
+  service:
+    type: LoadBalancer
