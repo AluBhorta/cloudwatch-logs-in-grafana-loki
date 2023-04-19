@@ -1,0 +1,34 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-demo
+  region: ap-south-1
+  version: "1.25"
+
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: cw-logger-sa
+      namespace: default
+    attachPolicyARNs:
+    - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+
+managedNodeGroups:
+  - name: ng-1-spot
+    spot: true # real money saver!
+    instanceTypes:
+      - t3a.medium
+      - t3a.small
+      - t3.medium
+      - t3.small
+    desiredCapacity: 3
+    minSize: 1
+    maxSize: 5
+    ssh:
+      allow: true
+      publicKeyPath: "ferdous-admin-ec2-key"
+
+vpc:
+  cidr: 192.168.0.0/16

@@ -1,0 +1,54 @@
+Name:         fluentd-custom-config
+Namespace:    monitoring
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+fluent.conf:
+----
+<source>
+  @type cloudwatch_logs
+  @id cloudwatch_logs
+  @label @LOKI
+  region eu-west-1
+  aws_key_id XXXXXXXXXXXXXX
+  aws_sec_key XXXXXXXXXXXXXXXXX
+  tag cloudwatch.in
+  log_group_name /ecs/pyypl-issuer-pckt-server
+  use_log_stream_name_prefix true
+  log_stream_name_prefix ""
+  state_file /fluentd/log/cloudwatch.state
+  <parse>
+    @type none
+  </parse>
+</source>
+
+<label @LOKI>
+  <match cloudwatch.in>
+    @type loki
+    url "http://aeb15c414bf604261bdbe44333d4c47e-1131286965.eu-west-1.elb.amazonaws.com"
+    extra_labels {"cloudwatch_logs":"all_logs"}
+    buffer_chunk_limit 1m
+    chunk_limit_size 1m
+  </match>
+</label>
+
+<source>
+  @type http
+  bind 0.0.0.0
+  port 24231
+</source>
+
+<source>
+  @type monitor_agent
+  bind 0.0.0.0
+  port 24232
+  tag monitor
+</source>
+
+
+BinaryData
+====
+
+Events:  <none>

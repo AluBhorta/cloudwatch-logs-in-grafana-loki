@@ -1,0 +1,20 @@
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Loki
+      type: loki
+      access: proxy
+      uid: loki
+      url: http://loki-gateway:80
+      isDefault: true
+      editable: false
+      version: 1
+persistence:
+  enabled: true
+  storageClassName: gp2
+service:
+  enabled: true
+  port: 80
+  targetPort: 3000
+  type: LoadBalancer
