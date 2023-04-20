@@ -42,12 +42,6 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
     --force
   ```
 
-- setup oidc provider
-
-  ```sh
-  eksctl utils associate-iam-oidc-provider --cluster $EKS_CLUSTER_NAME --approve
-  ```
-
 - use terraform to create s3 bucket and iam resources:
 
   ```sh
