@@ -8,12 +8,6 @@ metadata:
 
 iam:
   withOIDC: true
-  serviceAccounts:
-  - metadata:
-      name: cw-logger-sa
-      namespace: default
-    attachPolicyARNs:
-    - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 
 managedNodeGroups:
   - name: ng-1-spot

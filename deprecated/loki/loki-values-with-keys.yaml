@@ -52,7 +52,7 @@ loki:
     aws:
       insecure: false
       s3: s3://ap-south-1/rnd-and-tests
-      s3forcepathstyle: true    
+      s3forcepathstyle: true
     boltdb_shipper:
       active_index_directory: /var/loki/active
       shared_store: s3

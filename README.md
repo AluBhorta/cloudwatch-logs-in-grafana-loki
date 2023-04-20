@@ -9,6 +9,8 @@ export EKS_CLUSTER_NAME=eks-demo
 export AWS_ACCOUNT=$(aws sts get-caller-identity --output text --query Account --output text)
 ```
 
+- create eks cluster (if it doesn't exist yet)
+
 - setup cni (eg. flannel)
 
 - setup csi (eg. ebs)
@@ -39,7 +41,7 @@ eksctl utils associate-iam-oidc-provider --cluster $EKS_CLUSTER_NAME --approve
 - create storage bucket and iam role for loki with tf.
 
 ```sh
-oidc_id=$(aws eks describe-cluster --name $EKS_CLUSTER_NAME --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
+oidc_id=$(aws eks describe-cluster --name eks-demo --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 
 cd terraform
 
@@ -52,13 +54,21 @@ cd ..
 
 further [ref](https://github.com/grafana/loki/tree/main/production/terraform/modules/s3).
 
-- deploy loki with helm
+- deploy loki with helm (NOTE: update the bucket name, and the role arn in values)
 
 ```sh
+k create ns monitoring
+
+# update the loki-values with the bucket name
+
 helm upgrade --install loki grafana/loki -n monitoring -f loki-values.yaml
 ```
 
 - deploy grafana
+
+```sh
+helm upgrade --install grafana grafana/grafana -n monitoring -f grafana-values.yaml 
+```
 
 - deploy log forwarder eg. fluent-bit
 

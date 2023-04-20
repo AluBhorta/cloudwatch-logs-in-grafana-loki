@@ -63,19 +63,19 @@ data "aws_iam_policy_document" "oidc" {
 
     condition {
       test     = "StringEquals"
-      variable = "${var.oidc_id}:sub"
+      variable = "oidc.eks.${var.region}.amazonaws.com/id/${var.oidc_id}:sub"
       values   = ["system:serviceaccount:${var.namespace}:${var.serviceaccount}"]
     }
 
     condition {
       test     = "StringEquals"
-      variable = "${var.oidc_id}:aud"
+      variable = "oidc.eks.${var.region}.amazonaws.com/id/${var.oidc_id}:aud"
       values   = ["sts.amazonaws.com"]
     }
 
     principals {
       identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${var.oidc_id}"
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/oidc.eks.${var.region}.amazonaws.com/id/${var.oidc_id}"
       ]
       type        = "Federated"
     }
@@ -83,7 +83,7 @@ data "aws_iam_policy_document" "oidc" {
 }
 
 resource "aws_s3_bucket" "loki-data" {
-  bucket_prefix = "loki-data"
+  bucket_prefix = "loki-data-"
   force_destroy = false
 }
 
@@ -114,7 +114,7 @@ resource "aws_s3_bucket_policy" "grant-access" {
 }
 
 resource "aws_iam_role" "loki" {
-  name               = "loki-storage-${var.cluster_name}-role"
+  name               = "loki-storage-role"
   assume_role_policy = data.aws_iam_policy_document.oidc.json
 
   inline_policy {}

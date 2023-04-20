@@ -26,21 +26,21 @@ loki:
       type: local
   schema_config:
     configs:
-    - from: "2022-01-11"
-      index:
-        period: 24h
-        prefix: loki_index_
-      object_store: s3
-      schema: v12
-      store: boltdb-shipper
+      - from: "2022-01-11"
+        index:
+          period: 24h
+          prefix: loki_index_
+        object_store: s3
+        schema: v12
+        store: boltdb-shipper
   storage:
     type: s3
     bucketNames:
-      chunks: loki-store-eks-demo
-      ruler: loki-store-eks-demo
-      admin: loki-store-eks-demo      
+      chunks: loki-storage-eks-demo #bucket name
+      ruler: loki-storage-eks-demo
+      admin: loki-storage-eks-demo
     s3:
-      region: ap-south-1    
+      region: ap-south-1 #NOTE
       insecure: false
       s3forcepathstyle: true
   storage_config:
@@ -79,5 +79,6 @@ write:
     size: 4Gi
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/LokiStorage-eks-demo
+    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/LokiStorage-role
   create: true
+  name: loki #note, this takes effect on the oidc trust condition

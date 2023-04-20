@@ -1,0 +1,59 @@
+# image:
+#   repository: fluent/fluentd-kubernetes-daemonset
+#   tag: v1.13-debian-loki
+
+# env:
+# - name: AWS_REGION
+#   value: "ap-south-1"
+# - name: EKS_CLUSTER
+#   value: "eks-demo"
+# - name: LOKI_URL
+#   value: "http://loki-gateway:80"
+
+podSecurityPolicy:
+  enabled: false
+
+plugins:
+- fluent-plugin-cloudwatch-logs
+- fluent-plugin-grafana-loki
+
+serviceAccount:
+  create: true
+  name: fluentd
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/fluentd
+
+fileConfigs:
+  01_sources.conf: |-
+    <source>
+      @type cloudwatch_logs
+      region ap-south-1
+      # aws_use_sts true
+      tag cloudwatch.in
+      log_group_name "/freelance-client/10/sample-log-generator"
+      log_stream_name "from-"
+      use_log_stream_name_prefix true
+
+      <parse>
+        @type none
+      </parse>
+      
+      <web_identity_credentials>
+        role_arn arn:aws:iam::900142166256:role/fluentd
+        role_session_name default
+        web_identity_token_file "#{ENV['AWS_WEB_IDENTITY_TOKEN_FILE']}"
+      </web_identity_credentials>
+    </source>
+
+  02_filters.conf: ""  
+  
+  03_dispatch.conf: ""
+
+  04_outputs.conf: |-
+    <match **>
+      @type loki
+      url "http://loki-gateway:80"
+      flush_interval 10s
+      buffer_chunk_limit 1m
+      extra_labels {"namespace": "monitoring", "source": "cloudwatch", "log_group": "/freelance-client/10/sample-log-generator"}
+    </match>

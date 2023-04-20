@@ -33,3 +33,21 @@ NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 grafana        1/1     1            1           28d
 loki-gateway   1/1     1            1           39h
 [pratik.mohite@ip-10-150-136-93 ~]$
+
+[pratik.mohite@ip-10-150-136-93 ~]$ kubectl get pods -n kube-system
+NAME                                                              READY   STATUS    RESTARTS   AGE
+aws-load-balancer-controller-855f4cdc4-62hsd                      1/1     Running   0          41h
+aws-node-jp47m                                                    1/1     Running   0          41h
+aws-node-q2x7j                                                    1/1     Running   0          41h
+aws-node-qdzdh                                                    1/1     Running   0          41h
+cluster-autoscaler-1673421938-aws-cluster-autoscaler-86bd8xzf6q   1/1     Running   0          41h
+coredns-66689d8bc4-lxxmk                                          1/1     Running   0          41h
+coredns-66689d8bc4-nzdwb                                          1/1     Running   0          41h
+ebs-csi-controller-7794b5f9b7-2grmf                               6/6     Running   0          41h
+ebs-csi-controller-7794b5f9b7-f4kx9                               6/6     Running   0          41h
+ebs-csi-node-6dnml                                                3/3     Running   0          41h
+ebs-csi-node-dhqxv                                                3/3     Running   0          41h
+ebs-csi-node-gf2wp                                                3/3     Running   0          41h
+kube-proxy-8lpj2                                                  1/1     Running   0          41h
+kube-proxy-9j88n                                                  1/1     Running   0          41h
+kube-proxy-vlnzm                                                  1/1     Running   0          41h

@@ -1,0 +1,32 @@
+# USER-SUPPLIED VALUES:
+configMapConfigs:
+- fluentd-custom-config
+fileConfigs: []
+image:
+  pullPolicy: IfNotPresent
+  repository: 536228413576.dkr.ecr.eu-west-1.amazonaws.com/fluentd
+  tag: 1.0.1
+livenessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+replicaCount: 3
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4G
+  requests:
+    cpu: 1000m
+    memory: 2G

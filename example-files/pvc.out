@@ -1,0 +1,17 @@
+[pratik.mohite@ip-10-150-136-93 ~]$ kubectl get pvc -o wide
+NAME                           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE   VOLUMEMODE
+data-logstash-0                Bound    pvc-d9e27d37-2654-488c-9bba-e99b85bb32c2   10Gi       RWO            gp2            17d   Filesystem
+data-loki-read-0               Bound    pvc-2509a2a6-9c8d-451e-ba1c-91833f4eeec8   10Gi       RWO            gp2            93d   Filesystem
+data-loki-read-1               Bound    pvc-ed80ab3e-ccdd-47ba-8920-94568ec17d7f   10Gi       RWO            gp2            93d   Filesystem
+data-loki-read-2               Bound    pvc-adcf53f6-fd9e-4c88-9b4a-69dec07fc778   10Gi       RWO            gp2            93d   Filesystem
+data-loki-read-3               Bound    pvc-ea57352f-b30b-4ba7-9840-a72e64ee023e   10Gi       RWO            gp2            9d    Filesystem
+data-loki-write-0              Bound    pvc-6eb94632-924c-4459-8f65-2e2955ad6f5d   10Gi       RWO            gp2            93d   Filesystem
+data-loki-write-1              Bound    pvc-fbc05f29-804a-4f38-bbfb-d4bbd3d36a26   10Gi       RWO            gp2            93d   Filesystem
+data-loki-write-2              Bound    pvc-02fcfe96-13dd-494a-8eec-252dcc1b82d3   10Gi       RWO            gp2            93d   Filesystem
+data-loki-write-3              Bound    pvc-1328e47c-b5e1-484e-85b7-c76010da5b79   10Gi       RWO            gp2            9d    Filesystem
+grafana                        Bound    pvc-78a9d5a7-c1e3-4ea1-bf0c-3aa1ba01b12b   10Gi       RWO            gp2            29d   Filesystem
+storage-grafana-0              Bound    pvc-3140fe35-15dc-4360-a7f7-c71b3dd324ba   10Gi       RWO            gp2            54d   Filesystem
+storage-loki-0                 Bound    pvc-75ffc147-24c0-4c5f-8dc3-d356a7102631   10Gi       RWO            gp2            93d   Filesystem
+storage-loki-grafana-0         Bound    pvc-6a982bfc-a61f-4a38-98a6-33ba0fccad05   10Gi       RWO            gp2            50d   Filesystem
+storage-monitoring-grafana-0   Bound    pvc-b8b9021a-a091-400d-aaa3-fa202e93cbce   10Gi       RWO            gp2            35d   Filesystem
+storage-monitoting-grafana-0   Bound    pvc-c2fa18fc-0777-4606-84ce-33d841b5cb6e   10Gi       RWO            gp2            30d   Filesystem
