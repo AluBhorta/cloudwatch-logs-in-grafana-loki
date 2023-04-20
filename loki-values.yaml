@@ -96,6 +96,6 @@ gateway:
     type: ClusterIP # LoadBalancer
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/LokiStorage-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/loki-role
   create: true
-  name: loki #note, this takes effect on the oidc trust condition
+  name: loki-sa
