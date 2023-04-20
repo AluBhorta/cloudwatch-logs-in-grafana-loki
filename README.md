@@ -42,7 +42,7 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
     --force
   ```
 
-- use terraform to create s3 bucket and iam resources:
+- use terraform to create necessary aws resources like s3 bucket, iam roles, etc.:
 
   ```sh
   cd terraform
@@ -52,6 +52,13 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
   tf apply
 
   cd ..
+  ```
+
+  note the output, and update your helm chart values.
+
+- (optional) generate fake logs in cloudwatch:
+  ```sh
+  ./cw_logger.sh 
   ```
 
 - (optional) setup ingress controller

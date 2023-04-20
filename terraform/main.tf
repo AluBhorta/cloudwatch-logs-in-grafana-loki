@@ -218,6 +218,12 @@ resource "aws_iam_role" "fluentd" {
   ]
 }
 
+resource "aws_cloudwatch_log_group" "test-log-group" {
+  name       = "test-log-group"
+  skip_destroy      = false
+  retention_in_days = 7
+}
+
 
 # out
 output "s3_bucket" {
@@ -233,4 +239,9 @@ output "loki_role_arn" {
 output "fluentd_role_arn" {
   description = "fluentd role arn"
   value       = aws_iam_role.fluentd.arn
+}
+
+output "log_group_name" {
+  description = "log group name"
+  value       = aws_cloudwatch_log_group.test-log-group.name
 }

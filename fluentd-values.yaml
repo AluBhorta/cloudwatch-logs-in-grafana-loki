@@ -25,7 +25,7 @@ fileConfigs:
       @type cloudwatch_logs
       region ap-south-1
       tag cloudwatch.in
-      log_group_name "/freelance-client/10/sample-log-generator"
+      log_group_name "test-log-group"
       log_stream_name "from-"
       use_log_stream_name_prefix true
       fetch_interval 60 #in seconds
@@ -53,5 +53,5 @@ fileConfigs:
       url "http://loki-gateway:80"
       flush_interval 10s
       buffer_chunk_limit 1m
-      extra_labels {"namespace": "monitoring", "source": "cloudwatch", "log_group": "/freelance-client/10/sample-log-generator"}
+      extra_labels {"namespace": "monitoring", "source": "cloudwatch", "log_group": "test-log-group"}
     </match>

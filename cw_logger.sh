@@ -1,6 +1,6 @@
 #!/bin/sh
 
-LOG_GROUP_NAME="/freelance-client/10/sample-log-generator"  # Replace with your CloudWatch Logs group name
+LOG_GROUP_NAME="test-log-group"  # Replace with your CloudWatch Logs group name
 LOG_INTERVAL=30  # Adjust this value to the desired log interval in seconds
 
 while true; do
