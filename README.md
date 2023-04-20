@@ -70,7 +70,9 @@ helm upgrade --install loki grafana/loki -n monitoring -f loki-values.yaml
 helm upgrade --install grafana grafana/grafana -n monitoring -f grafana-values.yaml 
 ```
 
-- deploy log forwarder eg. fluent-bit
+- deploy log forwarder eg. fluentd
+
+NOTE: create iam role for fluentd
 
 - (optional) setup ingress controller
 
@@ -84,5 +86,18 @@ in reverse order
 
 eksctl delete addon --cluster $EKS_CLUSTER_NAME --name aws-ebs-csi-driver # --preserve
 
+# remove the PVCs (warning chance of data loss)
+k delete pvc --all
+
 # ...
 ```
+
+# notes
+
+- `start_time` in fluentd can be used to specify the oldest logs to retrieve
+  - note: loki must have `reject_old_samples: false` or a very large `reject_old_samples_max_age`
+- make sure to use new PVCs or remove the old ones for loki. otherwise you might not get the expected data.
+
+# refs
+
+- https://github.com/fluent-plugins-nursery/fluent-plugin-cloudwatch-logs#in_cloudwatch_logs

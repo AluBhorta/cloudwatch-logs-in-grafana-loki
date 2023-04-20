@@ -28,11 +28,13 @@ fileConfigs:
     <source>
       @type cloudwatch_logs
       region ap-south-1
-      # aws_use_sts true
       tag cloudwatch.in
       log_group_name "/freelance-client/10/sample-log-generator"
       log_stream_name "from-"
       use_log_stream_name_prefix true
+      fetch_interval 30 #in seconds
+      use_aws_timestamp true
+      start_time "2023-03-01 00:00:00Z"
 
       <parse>
         @type none

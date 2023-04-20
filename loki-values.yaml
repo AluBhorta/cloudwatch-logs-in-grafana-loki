@@ -1,6 +1,3 @@
-gateway:
-  service:
-    type: LoadBalancer
 loki:
   auth_enabled: false
   commonConfig:
@@ -8,17 +5,10 @@ loki:
     replication_factor: 1
   limits_config:
     enforce_metric_name: false
-    ingestion_burst_size_mb: 20
-    ingestion_rate_mb: 10
-    max_concurrent_tail_requests: 10
-    max_entries_limit_per_query: 5000
-    max_line_size: 0
-    max_query_length: 0s
-    max_query_parallelism: 16
-    max_streams_per_user: 0
-    query_timeout: 900s
-    reject_old_samples: true
-    reject_old_samples_max_age: 168h
+    reject_old_samples: false
+    # reject_old_samples_max_age: 8760h # 1 year
+    max_cache_freshness_per_query: 1m
+    split_queries_by_interval: 30m
   rulerConfig:
     storage:
       local:
@@ -40,6 +30,7 @@ loki:
       ruler: loki-storage-eks-demo
       admin: loki-storage-eks-demo
     s3:
+      # bucketnames: loki-storage-eks-demo
       region: ap-south-1 #NOTE
       insecure: false
       s3forcepathstyle: true
@@ -77,6 +68,10 @@ write:
   persistence:
     enableStatefulSetAutoDeletePVC: true
     size: 4Gi
+gateway:
+  replicas: 1
+  service:
+    type: ClusterIP # LoadBalancer
 serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/LokiStorage-role
