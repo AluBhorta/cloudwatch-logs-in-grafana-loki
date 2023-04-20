@@ -47,6 +47,8 @@ cd terraform
 
 tf init
 
+# TODO: add fluentd role in tf
+
 tf apply -var oidc_id=$oidc_id
 
 cd ..
@@ -90,6 +92,10 @@ eksctl delete addon --cluster $EKS_CLUSTER_NAME --name aws-ebs-csi-driver # --pr
 k delete pvc --all
 
 # ...
+
+# delete s3 bucket objects
+
+# ...
 ```
 
 # notes
@@ -97,6 +103,8 @@ k delete pvc --all
 - `start_time` in fluentd can be used to specify the oldest logs to retrieve
   - note: loki must have `reject_old_samples: false` or a very large `reject_old_samples_max_age`
 - make sure to use new PVCs or remove the old ones for loki. otherwise you might not get the expected data.
+  - also consider deleting s3 bucket data
+
 
 # refs
 

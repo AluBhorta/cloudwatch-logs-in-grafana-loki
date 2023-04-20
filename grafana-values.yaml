@@ -8,7 +8,7 @@ datasources:
       uid: loki
       url: http://loki-gateway:80
       isDefault: true
-      editable: false
+      editable: true
       version: 1
 persistence:
   enabled: false

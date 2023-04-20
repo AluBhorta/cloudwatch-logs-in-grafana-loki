@@ -1,28 +1,23 @@
 loki:
   auth_enabled: false
+
   commonConfig:
     path_prefix: /var/loki
     replication_factor: 1
+
   limits_config:
     enforce_metric_name: false
     reject_old_samples: false
-    # reject_old_samples_max_age: 8760h # 1 year
+    reject_old_samples_max_age: 8760h # 1 year
     max_cache_freshness_per_query: 1m
     split_queries_by_interval: 30m
+
   rulerConfig:
     storage:
       local:
         directory: /var/loki/rules
       type: local
-  schema_config:
-    configs:
-      - from: "2022-01-11"
-        index:
-          period: 24h
-          prefix: loki_index_
-        object_store: s3
-        schema: v12
-        store: boltdb-shipper
+
   storage:
     type: s3
     bucketNames:
@@ -30,14 +25,41 @@ loki:
       ruler: loki-storage-eks-demo
       admin: loki-storage-eks-demo
     s3:
-      # bucketnames: loki-storage-eks-demo
       region: ap-south-1 #NOTE
       insecure: false
       s3forcepathstyle: true
+
+  # The storage_config block configures one of many possible stores for both the
+  # index and chunks. Which configuration to be picked should be defined in
+  # schema_config block.
   storage_config:
+    named_stores:
+      aws:
+        aws-store-1:
+          endpoint: s3://loki-storage-eks-demo
+          region: ap-south-1
+          signature_version: "v4"
+          storage_class: "STANDARD"
+
+    # Configures storing index in an Object Store (GCS/S3/Azure/Swift/Filesystem) in
+    # the form of boltdb files. Required fields only required when boltdb-shipper is
+    # defined in config.
     boltdb_shipper:
       active_index_directory: /var/loki/index
       shared_store: s3
+      cache_location: /var/loki/boltdb-cache
+
+  # Configures the chunk index schema and where it is stored.
+  schema_config:
+    configs:
+      - from: "2020-01-01"
+        schema: v11
+        store: boltdb-shipper 
+        object_store: aws-store-1
+        index:
+          period: 24h
+          prefix: loki_index_
+
 monitoring:
   alerts:
     enabled: false
