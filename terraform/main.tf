@@ -5,16 +5,10 @@ variable "region" {
   default     = "ap-south-1"
 }
 
-variable "bucket_name" {
-  description = "Bucket name for Loki storage"
-  type        = string
-  default     = "loki-storage-eks-demo"
-}
-
 variable "cluster_name" {
   description = "Name of already existing EKS cluster"
   type        = string
-  default     = "eks-demo"
+  #default     = "eks-demo"
 }
 
 variable "namespace" {
@@ -69,7 +63,7 @@ locals {
 
 
 resource "aws_s3_bucket" "loki-data" {
-  bucket = var.bucket_name
+  bucket_prefix = "loki-data-"
 }
 
 resource "aws_s3_bucket_policy" "grant-access" {
@@ -170,13 +164,6 @@ resource "aws_iam_policy" "fluentd-policy" {
           Effect   = "Allow"
           Resource = "*"
         },
-        # {
-        #   Action = [
-        #     "sts:AssumeRole",
-        #   ]
-        #   Effect   = "Allow"
-        #   Resource = "arn:aws:iam::900142166256:role/fluentd"
-        # },
       ]
       Version = "2012-10-17"
     }
@@ -219,11 +206,9 @@ resource "aws_iam_role" "fluentd" {
 }
 
 resource "aws_cloudwatch_log_group" "test-log-group" {
-  name       = "test-log-group"
-  skip_destroy      = false
-  retention_in_days = 7
+  name              = "test-log-group"
+  retention_in_days = 30
 }
-
 
 # out
 output "s3_bucket" {

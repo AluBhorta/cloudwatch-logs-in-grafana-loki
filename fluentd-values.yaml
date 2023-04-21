@@ -17,15 +17,15 @@ serviceAccount:
   create: true
   name: fluentd-sa
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/fluentd-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/fluentd-role # TODO: change
 
 fileConfigs:
   01_sources.conf: |-
     <source>
       @type cloudwatch_logs
-      region ap-south-1
+      region ap-south-1 # TODO: change
       tag cloudwatch.in
-      log_group_name "test-log-group"
+      log_group_name "test-log-group" # TODO: change
       log_stream_name "from-"
       use_log_stream_name_prefix true
       fetch_interval 60 #in seconds
@@ -37,7 +37,7 @@ fileConfigs:
       </parse>
       
       <web_identity_credentials>
-        role_arn arn:aws:iam::900142166256:role/fluentd
+        role_arn arn:aws:iam::900142166256:role/fluentd-role # TODO: change
         role_session_name default
         web_identity_token_file "#{ENV['AWS_WEB_IDENTITY_TOKEN_FILE']}"
       </web_identity_credentials>
@@ -53,5 +53,6 @@ fileConfigs:
       url "http://loki-gateway:80"
       flush_interval 10s
       buffer_chunk_limit 1m
-      extra_labels {"namespace": "monitoring", "source": "cloudwatch", "log_group": "test-log-group"}
+      # TODO: change
+      extra_labels {"namespace": "monitoring", "source": "cloudwatch", "log_group": "test-log-group"} 
     </match>

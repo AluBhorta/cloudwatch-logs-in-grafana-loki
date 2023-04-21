@@ -12,9 +12,3 @@ datasources:
       version: 1
 persistence:
   enabled: false
-  # storageClassName: gp2
-# service:
-#   enabled: true
-  # port: 80
-  # targetPort: 3000
-  # type: LoadBalancer

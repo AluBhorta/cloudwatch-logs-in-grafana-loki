@@ -2,13 +2,19 @@
 
 setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
 
-## get started
+## get started 🚀
 
 - setup env vars
 
   ```sh
   export EKS_CLUSTER_NAME=eks-demo
   export AWS_ACCOUNT=$(aws sts get-caller-identity --output text --query Account --output text)
+  ```
+
+- ensure oidc provider is associated
+
+  ```sh
+  eksctl utils associate-iam-oidc-provider --cluster $EKS_CLUSTER_NAME --approve
   ```
 
 - create eks cluster (if it doesn't exist yet)
@@ -54,18 +60,31 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
   cd ..
   ```
 
-  note the output, and update your helm chart values.
+  note the output values. you'll need them to update helm chart values.
 
 - (optional) generate fake logs in cloudwatch:
+
   ```sh
-  ./cw_logger.sh 
+  ./cw_logger.sh
   ```
 
 - (optional) setup ingress controller
 
-### deploy grafana-loki-fluentd stack with helm
+### deploy grafana-loki-fluentd stack with helm ☸️
 
-make sure the `*-values.yaml` files are updated to suit your env.
+- make sure the `*-values.yaml` files are updated to suit your env.
+
+  minimum changes needed:
+
+  - loki values
+    - s3 bucket name
+    - aws region
+    - service account role arn
+  - fluentd values
+    - log_group_name
+    - aws region
+    - service account role arn
+    - role arn in web_identity_credentials config
 
 - create ns:
 
@@ -91,7 +110,15 @@ make sure the `*-values.yaml` files are updated to suit your env.
   helm upgrade --install grafana grafana/grafana -n monitoring -f grafana-values.yaml
   ```
 
-## clean up
+- login to grafana on http://localhost:3000 with the password to get up and running!
+
+  ```sh
+  kubectl get secret -n monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+  kubectl port-forward -n monitoring service/grafana 3000:80
+  ```
+
+## clean up 🧹
 
 in reverse order:
 
