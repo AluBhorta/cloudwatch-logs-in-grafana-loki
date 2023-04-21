@@ -205,10 +205,10 @@ resource "aws_iam_role" "fluentd" {
   ]
 }
 
-resource "aws_cloudwatch_log_group" "test-log-group" {
-  name              = "test-log-group"
-  retention_in_days = 30
-}
+# resource "aws_cloudwatch_log_group" "test-log-group" {
+#   name              = "test-log-group"
+#   retention_in_days = 30
+# }
 
 # out
 output "s3_bucket" {
@@ -226,7 +226,7 @@ output "fluentd_role_arn" {
   value       = aws_iam_role.fluentd.arn
 }
 
-output "log_group_name" {
-  description = "log group name"
-  value       = aws_cloudwatch_log_group.test-log-group.name
-}
+# output "log_group_name" {
+#   description = "log group name"
+#   value       = aws_cloudwatch_log_group.test-log-group.name
+# }
