@@ -11,16 +11,16 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
   export AWS_ACCOUNT=$(aws sts get-caller-identity --output text --query Account --output text)
   ```
 
-- ensure oidc provider is associated
-
-  ```sh
-  eksctl utils associate-iam-oidc-provider --cluster $EKS_CLUSTER_NAME --approve
-  ```
-
 - create eks cluster (if it doesn't exist yet)
 
   ```sh
   eksctl create cluster -f eksctl_cluster.yaml
+  ```
+
+- ensure oidc provider is associated
+
+  ```sh
+  eksctl utils associate-iam-oidc-provider --cluster $EKS_CLUSTER_NAME --approve
   ```
 
 - setup cni (eg. flannel)
