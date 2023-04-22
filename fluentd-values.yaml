@@ -1,50 +1,37 @@
-# env:
-# - name: AWS_REGION
-#   value: "ap-south-1"
-# - name: EKS_CLUSTER
-#   value: "eks-demo"
-# - name: LOKI_URL
-#   value: "http://loki-gateway:80"
-
 podSecurityPolicy:
   enabled: false
 
 plugins:
-- fluent-plugin-cloudwatch-logs
-- fluent-plugin-grafana-loki
+  - fluent-plugin-cloudwatch-logs
+  - fluent-plugin-grafana-loki
 
-serviceAccount:
-  create: true
-  name: fluentd-sa
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/fluentd-role # TODO: change
+envFrom:
+- secretRef:
+    name: fluentd-aws-secrets
 
 fileConfigs:
   01_sources.conf: |-
     <source>
       @type cloudwatch_logs
-      region ap-south-1 # TODO: change
       tag cloudwatch.in
-      log_group_name "test-log-group" # TODO: change
-      log_stream_name "from-"
-      use_log_stream_name_prefix true
-      fetch_interval 60 #in seconds
       use_aws_timestamp true
-      start_time "2023-03-01 00:00:00Z"
+      fetch_interval 30 #in seconds
+      start_time "2023-01-01 00:00:00Z"
+      use_log_stream_name_prefix true
+
+      region "#{ENV['AWS_REGION']}"
+      aws_key_id "#{ENV['AWS_ACCESS_KEY']}" 
+      aws_sec_key "#{ENV['AWS_SECRET_KEY']}"  
+      log_group_name "#{ENV['CW_LOG_GROUP']}" 
+      log_stream_name "#{ENV['CW_LOG_STREAM_PREFIX']}" 
 
       <parse>
         @type none
       </parse>
-      
-      <web_identity_credentials>
-        role_arn arn:aws:iam::900142166256:role/fluentd-role # TODO: change
-        role_session_name default
-        web_identity_token_file "#{ENV['AWS_WEB_IDENTITY_TOKEN_FILE']}"
-      </web_identity_credentials>
     </source>
 
-  02_filters.conf: ""  
-  
+  02_filters.conf: ""
+
   03_dispatch.conf: ""
 
   04_outputs.conf: |-
@@ -53,6 +40,5 @@ fileConfigs:
       url "http://loki-gateway:80"
       flush_interval 10s
       buffer_chunk_limit 1m
-      # TODO: change
-      extra_labels {"namespace": "monitoring", "source": "cloudwatch", "log_group": "test-log-group"} 
+      extra_labels {"source": "cloudwatch", "log_group": "#{ENV['CW_LOG_GROUP']}" } 
     </match>

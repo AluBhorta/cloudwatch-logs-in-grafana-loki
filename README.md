@@ -9,6 +9,7 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
   ```sh
   export EKS_CLUSTER_NAME=eks-demo
   export AWS_ACCOUNT=$(aws sts get-caller-identity --output text --query Account --output text)
+  export K8S_NAMESPACE=monitoring-stack
   ```
 
 - create eks cluster (if it doesn't exist yet)
@@ -80,42 +81,61 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
     - s3 bucket name
     - aws region
     - service account role arn
-  - fluentd values
-    - log_group_name
-    - aws region
-    - service account role arn
-    - role arn in web_identity_credentials config
 
 - create ns:
 
   ```sh
-  k create ns monitoring
+  k create ns $K8S_NAMESPACE
   ```
 
 - deploy loki
 
   ```sh
-  helm upgrade --install loki grafana/loki -n monitoring -f loki-values.yaml
+  helm upgrade --install loki grafana/loki -n $K8S_NAMESPACE -f loki-values.yaml
   ```
 
 - deploy fluentd
 
-  ```sh
-  helm upgrade --install fluentd fluent/fluentd -n monitoring -f fluentd-values.yaml
-  ```
+  - create an iam user in the AWS account that contains the log group with the following policy. make sure to replace the aws region, aws account and log group.
+    ```json
+    {
+      "Statement": [
+        {
+          "Sid": "consumer",
+          "Action": ["logs:DescribeLogStreams", "logs:GetLogEvents"],
+          "Effect": "Allow",
+          "Resource": [
+            "arn:aws:logs:<AWS_REGION>:<AWS_ACCOUNT>:log-group:<CW_LOG_GROUP>:*"
+          ]
+        }
+      ],
+      "Version": "2012-10-17"
+    }
+    ```
+  - create access+secret key pair for the user
+  - update the [fluentd-aws-secrets.yaml](./fluentd-aws-secrets.yaml) with your correct values
+  - create the secret object:
+    ```sh
+    kubectl apply -n $K8S_NAMESPACE -f fluentd-aws-secrets.yaml
+    ```
+  - deploy helm chart
+
+    ```sh
+    helm upgrade --install fluentd fluent/fluentd -n $K8S_NAMESPACE -f fluentd-values.yaml
+    ```
 
 - deploy grafana
 
   ```sh
-  helm upgrade --install grafana grafana/grafana -n monitoring -f grafana-values.yaml
+  helm upgrade --install grafana grafana/grafana -n $K8S_NAMESPACE -f grafana-values.yaml
   ```
 
 - login to grafana on http://localhost:3000 with the password to get up and running!
 
   ```sh
-  kubectl get secret -n monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+  kubectl get secret -n $K8S_NAMESPACE grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 
-  kubectl port-forward -n monitoring service/grafana 3000:80
+  kubectl port-forward -n $K8S_NAMESPACE service/grafana 3000:80
   ```
 
 ## clean up 🧹
@@ -123,7 +143,7 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
 in reverse order:
 
 ```sh
-helm del fluentd grafana loki
+helm del fluentd grafana loki -n $K8S_NAMESPACE
 
 # remove ingress controller (if installed)
 
@@ -133,7 +153,7 @@ aws s3 rm s3://$LOKI_S3_BUCKET_NAME --recursive
 tf destroy
 
 # remove the PVCs (warning: data loss)
-k delete pvc -n monitoring --all
+k delete pvc -n $K8S_NAMESPACE --all
 
 eksctl delete addon --cluster $EKS_CLUSTER_NAME --name aws-ebs-csi-driver
 

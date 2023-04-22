@@ -21,9 +21,9 @@ loki:
   storage:
     type: s3
     bucketNames:
-      chunks: loki-data-20230421054857374200000001 # TODO: change
-      ruler: loki-data-20230421054857374200000001 # TODO: change
-      admin: loki-data-20230421054857374200000001 # TODO: change
+      chunks: loki-data-20230422053230104300000001 # TODO: change
+      ruler: loki-data-20230422053230104300000001 # TODO: change
+      admin: loki-data-20230422053230104300000001 # TODO: change
     s3:
       region: ap-south-1 # TODO: change
       insecure: false
@@ -36,7 +36,7 @@ loki:
     named_stores:
       aws:
         aws-store-1:
-          endpoint: s3://loki-data-20230421054857374200000001 # TODO: change
+          endpoint: s3://loki-data-20230422053230104300000001 # TODO: change
           region: ap-south-1 # TODO: change
           signature_version: "v4"
           storage_class: "STANDARD"
