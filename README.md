@@ -73,6 +73,14 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
 
 ### deploy grafana-loki-fluentd stack with helm ☸️
 
+- add helm repos
+  
+  ```sh
+  helm repo add grafana https://grafana.github.io/helm-charts
+  helm repo add fluent https://fluent.github.io/helm-charts
+  helm repo update
+  ```
+
 - make sure the `*-values.yaml` files are updated to suit your env.
 
   minimum changes needed:

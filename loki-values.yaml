@@ -21,11 +21,11 @@ loki:
   storage:
     type: s3
     bucketNames:
-      chunks: loki-data-20230422053230104300000001 # TODO: change
-      ruler: loki-data-20230422053230104300000001 # TODO: change
-      admin: loki-data-20230422053230104300000001 # TODO: change
+      chunks: logging-pyypl-loki-storage # TODO: change
+      ruler: logging-pyypl-loki-storage # TODO: change
+      admin: logging-pyypl-loki-storage # TODO: change
     s3:
-      region: ap-south-1 # TODO: change
+      region: eu-west-1 # TODO: change
       insecure: false
       s3forcepathstyle: true
 
@@ -36,8 +36,8 @@ loki:
     named_stores:
       aws:
         aws-store-1:
-          endpoint: s3://loki-data-20230422053230104300000001 # TODO: change
-          region: ap-south-1 # TODO: change
+          endpoint: s3://logging-pyypl-loki-storage # TODO: change
+          region: eu-west-1 # TODO: change
           signature_version: "v4"
           storage_class: "STANDARD"
 
@@ -62,7 +62,7 @@ loki:
 
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::900142166256:role/loki-role # TODO: change
+    eks.amazonaws.com/role-arn: arn:aws:iam::536228413576:role/logging-loki-role # TODO: change
   create: true
   name: loki-sa
 

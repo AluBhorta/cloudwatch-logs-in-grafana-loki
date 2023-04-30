@@ -12,3 +12,5 @@ datasources:
       version: 1
 persistence:
   enabled: false
+service:
+  type: LoadBalancer
