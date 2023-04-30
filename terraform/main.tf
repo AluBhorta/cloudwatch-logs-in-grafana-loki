@@ -2,13 +2,12 @@
 variable "region" {
   description = "AWS region"
   type        = string
-  default     = "eu-west-1"
+  # default     = "eu-west-1"
 }
 
 variable "cluster_name" {
   description = "Name of already existing EKS cluster"
   type        = string
-  default     = "Grafana-EKS"
 }
 
 # prov
@@ -44,7 +43,7 @@ locals {
 }
 
 resource "aws_s3_bucket" "loki-data" {
-  bucket = "logging-pyypl-loki-storage"
+  bucket_prefix = "loki-storage-"
 }
 
 resource "aws_s3_bucket_policy" "grant-access" {

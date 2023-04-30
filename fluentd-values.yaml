@@ -43,5 +43,5 @@ fileConfigs:
       url "http://loki-gateway:80"
       flush_interval 10s
       buffer_chunk_limit 1m
-      extra_labels {"source": "cloudwatch", "log_group": "#{ENV['CW_LOG_GROUP']}" } 
+      extra_labels {"source": "cloudwatch"}
     </match>

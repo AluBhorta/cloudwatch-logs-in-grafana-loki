@@ -54,27 +54,30 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
   ```sh
   cd terraform
 
-  tf init
+  terraform init
 
-  tf apply
+  terraform apply
 
   cd ..
   ```
 
   note the output values. you'll need them to update helm chart values.
 
-- (optional) generate fake logs in cloudwatch:
+- create a cloudwatch log group eg. `test-log-group`
+- generate fake logs in the log group:
 
   ```sh
   ./cw_logger.sh
   ```
 
-- (optional) setup ingress controller
+  you may adjust the script to your liking.
+
+- setup [aws load balancer controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html)
 
 ### deploy grafana-loki-fluentd stack with helm ☸️
 
 - add helm repos
-  
+
   ```sh
   helm repo add grafana https://grafana.github.io/helm-charts
   helm repo add fluent https://fluent.github.io/helm-charts
@@ -87,16 +90,20 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
 
   - loki values
     - s3 bucket name
+      ```sh
+      sed -i '' -e 's/loki-storage-example/<your-bucket-name>/g' loki-values.yaml
+      ```
+      replace `<your-bucket-name>`.
     - aws region
     - service account role arn
 
 - create ns:
 
   ```sh
-  k create ns $K8S_NAMESPACE
+  kubectl create ns $K8S_NAMESPACE
   ```
 
-- deploy loki
+- deploy loki with helm
 
   ```sh
   helm upgrade --install loki grafana/loki -n $K8S_NAMESPACE -f loki-values.yaml
@@ -123,28 +130,38 @@ setup grafana-loki-fluentd stack on eks to analyze logs eg. from aws cloudwatch.
   - create access+secret key pair for the user
   - update the [fluentd-aws-secrets.yaml](./fluentd-aws-secrets.yaml) with your correct values
   - create the secret object:
+
     ```sh
     kubectl apply -n $K8S_NAMESPACE -f fluentd-aws-secrets.yaml
     ```
-  - deploy helm chart
+
+  - deploy fluentd with helm
 
     ```sh
     helm upgrade --install fluentd fluent/fluentd -n $K8S_NAMESPACE -f fluentd-values.yaml
     ```
 
-- deploy grafana
+- deploy grafana with helm
 
   ```sh
   helm upgrade --install grafana grafana/grafana -n $K8S_NAMESPACE -f grafana-values.yaml
   ```
 
-- login to grafana on http://localhost:3000 with the password to get up and running!
+- get grafana admin password
 
   ```sh
   kubectl get secret -n $K8S_NAMESPACE grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-
-  kubectl port-forward -n $K8S_NAMESPACE service/grafana 3000:80
   ```
+
+- login to grafana. you can get the external ip of the LB via:
+  ```sh
+  kubectl get svc grafana
+  ```
+
+## issues
+
+- (WIP) Cloudwatch logs are not being properly ingested in loki via fluentd - getting "entry too far behind" warnings
+  - opened issue in loki: https://github.com/grafana/loki/issues/9355
 
 ## clean up 🧹
 
@@ -153,15 +170,15 @@ in reverse order:
 ```sh
 helm del fluentd grafana loki -n $K8S_NAMESPACE
 
-# remove ingress controller (if installed)
+# remove ingress controller
 
 # delete s3 bucket objects (warning: data loss)
 aws s3 rm s3://$LOKI_S3_BUCKET_NAME --recursive
 
-tf destroy
+terraform destroy
 
 # remove the PVCs (warning: data loss)
-k delete pvc -n $K8S_NAMESPACE --all
+kubectl delete pvc -n $K8S_NAMESPACE --all
 
 eksctl delete addon --cluster $EKS_CLUSTER_NAME --name aws-ebs-csi-driver
 
@@ -170,9 +187,7 @@ eksctl delete cluster -f eksctl_cluster.yaml
 
 # notes
 
-- `start_time` in fluentd can be used to specify the oldest logs to retrieve
-  - note: loki must have `reject_old_samples: false` or a very large `reject_old_samples_max_age`
-- make sure to use new PVCs or remove the old ones for loki. otherwise you might not get the expected data.
+- make sure to use new PVCs or remove the old ones for loki. otherwise you might not get the expected behaviour.
   - also consider deleting s3 bucket data
 
 # refs

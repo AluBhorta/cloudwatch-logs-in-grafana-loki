@@ -8,7 +8,7 @@ loki:
   limits_config:
     enforce_metric_name: false
     reject_old_samples: false
-    reject_old_samples_max_age: 8760h # 1 year
+    reject_old_samples_max_age: 3y
     max_cache_freshness_per_query: 1m
     split_queries_by_interval: 30m
 
@@ -21,9 +21,9 @@ loki:
   storage:
     type: s3
     bucketNames:
-      chunks: logging-pyypl-loki-storage # TODO: change
-      ruler: logging-pyypl-loki-storage # TODO: change
-      admin: logging-pyypl-loki-storage # TODO: change
+      chunks: loki-storage-example # TODO: change
+      ruler: loki-storage-example # TODO: change
+      admin: loki-storage-example # TODO: change
     s3:
       region: eu-west-1 # TODO: change
       insecure: false
@@ -36,7 +36,7 @@ loki:
     named_stores:
       aws:
         aws-store-1:
-          endpoint: s3://logging-pyypl-loki-storage # TODO: change
+          endpoint: s3://loki-storage-example # TODO: change
           region: eu-west-1 # TODO: change
           signature_version: "v4"
           storage_class: "STANDARD"
@@ -62,7 +62,7 @@ loki:
 
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::536228413576:role/logging-loki-role # TODO: change
+    eks.amazonaws.com/role-arn: arn:aws:iam::XXXXXXXXX:role/logging-loki-role # TODO: change
   create: true
   name: loki-sa
 

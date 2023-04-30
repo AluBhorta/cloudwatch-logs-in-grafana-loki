@@ -4,7 +4,7 @@ LOG_GROUP_NAME="test-log-group"  # Replace with your CloudWatch Logs group name
 LOG_INTERVAL=30  # Adjust this value to the desired log interval in seconds
 
 while true; do
-  LOG_STREAM_NAME=from-tm-ec2_$(date -u +"%H-%M-%S")  
+  LOG_STREAM_NAME=test-stream-$(date -u +"%H-%M-%S")  
 
   aws logs create-log-stream \
     --log-group-name "${LOG_GROUP_NAME}" \
