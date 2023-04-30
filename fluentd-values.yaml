@@ -1,3 +1,6 @@
+kind: "Deployment"
+replicaCount: 1
+
 podSecurityPolicy:
   enabled: false
 
